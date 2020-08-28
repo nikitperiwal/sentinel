@@ -1,0 +1,247 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block headfiles %}
+{% endblock %}
+
+{% block dashboard-status %}
+"active"
+{% endblock %}
+
+{% block content %}
+<div class="content">
+	<div class="row">
+		<div class="col-xl-4 col-lg-4">
+			<div id="scrape-card"
+			     class="card">
+				<div class="card-header">
+					<h4 class="card-title">
+						<i
+								class="fab fa-twitter text-primary"
+								style="font-size: 1rem;"
+						></i>
+						Scrape Tweets
+					</h4>
+				</div>
+				<div class="card-body">
+					<div class="col">
+						<form id="scrape-form"
+						      action="{% url 'sentinel_frontend:dashboard' %}"
+						      method="POST"
+						      onsubmit="submitNotify()">
+							{% csrf_token %}
+							<label for="keywords"> Keywords: </label>
+							<input
+									id="keywords"
+									name="keywords"
+									type="text"
+									class="form-control"
+									placeholder="Word to search"
+									required
+							/>
+							<label for="excludeWords">Exclude Words: </label>
+							<input
+									id="excludeWords"
+									name="excludeWords"
+									type="text"
+									class="form-control"
+									placeholder="Word to exclude"
+							/>
+							<label for="startDate">From date: </label>
+							<input id="startDate"
+							       name="startDate"
+							       type="date"
+							       class="form-control"/>
+							<label for="endDate">To date: </label>
+							<input id="endDate"
+							       name="endDate"
+							       type="date"
+							       class="form-control"/>
+							<label for="dailyNum">Number of tweets daily: </label>
+							<input
+									id="dailyNum"
+									name="dailyNum"
+									type="number"
+									class="form-control"
+									value="50"
+							/>
+							<button type="submit"
+							        class="btn btn-primary">
+								Submit
+							</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col">
+			<div id="timeline-card"
+			     class="card"
+			     style="height: 95%; min-height: 400px;">
+				<div class="card-header">
+					<div class="row">
+						<div class="col-sm-5 text-left">
+							<h4 class="card-title">
+								<i
+										class="fas fa-chart-line text-primary"
+										style="font-size: 1rem;"
+								></i>
+								Sentiment Time-graph
+							</h4>
+						</div>
+						<div class="col-sm-7">
+							<div
+									class="btn-group btn-group-toggle float-right"
+									data-toggle="buttons">
+								<label class="btn btn-sm btn-primary btn-simple"
+								       id="0">
+									<input type="radio"
+									       name="options"
+									       checked/>
+									<span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">1 Month</span>
+									<span class="d-block d-sm-none">1M</span>
+								</label>
+								<label class="btn btn-sm btn-primary btn-simple"
+								       id="1">
+									<input
+											type="radio"
+											class="d-none d-sm-none"
+											name="options"/>
+									<span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">2 Months</span>
+									<span class="d-block d-sm-none">2M</span>
+								</label>
+								<label class="btn btn-sm btn-primary btn-simple"
+								       id="2">
+									<input type="radio"
+									       class="d-none"
+									       name="options"/>
+									<span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">3 Months</span>
+									<span class="d-block d-sm-none">3M</span>
+								</label>
+								<label
+										class="btn btn-sm btn-primary btn-simple active"
+										id="3">
+									<input type="radio"
+									       class="d-none"
+									       name="options"/>
+									<span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">All</span>
+									<span class="d-block d-sm-none">All</span>
+								</label>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="card-body">
+					<div class="chart-area"
+					     style="height: 90%; padding: 10px;">
+						<div class="row"
+						     style="position: relative; height: 70%; width: 100%;">
+							<canvas id="chart-timeline-sentiment"></canvas>
+						</div>
+						<div class="row"
+						     style="position: relative; height: 40%;">
+							<canvas id="chart-timeline-volume"></canvas>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="col-12 col-sm-6">
+			<div id="bar-card"
+			     class="card card-chart">
+				<div class="card-header">
+					<h4 class="card-title">
+						<i
+								class="fas fa-chart-bar text-primary"
+								style="font-size: 1rem;"
+						></i>
+						Bar Chart
+					</h4>
+				</div>
+				<div class="card-body">
+					<div class="chart-area"
+					     style="position: relative; height: 90%; width: 100%;">
+						<canvas id="chart-bar"></canvas>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="col-12 col-sm-6">
+			<div id="pie-card"
+			     class="card card-chart">
+				<div class="card-header">
+					<h4 class="card-title">
+						<i
+								class="fas fa-chart-pie text-primary"
+								style="font-size: 1rem;"
+						></i>
+						Pie Chart
+					</h4>
+				</div>
+				<div class="card-body">
+					<div class="chart-area"
+					     style="position: relative; height: 90%; width: 100%;">
+						<canvas id="chart-pie"></canvas>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock%}
+
+
+{% block javascript %}
+<script src="{% static '/js/scrape-form.js' %}"></script>
+<!--Resize chart cards-->
+<script>
+    $(".card-chart").css('height', $(".card-chart").width()*0.7);
+    window.addEventListener("resize", setChartHeight);
+    function setChartHeight(){
+        $(".card-chart").css('height', $(".card-chart").width()*0.7);
+    }
+</script>
+
+<script>
+    function submitNotify(){
+        $.notify(
+	        {
+    	        icon: "fab fa-twitter",
+	            message: "Scraping tweets. Please wait for a short while.",
+	        },
+	        {
+	            type: "primary",
+	        }
+	        );
+    }
+
+
+</script>
+
+<!--Charts-->
+<script>
+    var bar_data = {{ bar_data }}
+    var pie_data = {{ pie_data }}
+    var volumedata = [
+    {% for data in timeseries_data.itertuples %}
+    {x: new Date("{{ data.datetime }}"), y: {{ data.volume }},},{% endfor %}
+	  ]
+	  var short_sentiment = [
+	  {% for data in timeseries_data.itertuples %}
+    {x: new Date("{{ data.datetime }}"), y: {{ data.short_sentiment }},},{% endfor %}
+	  ]
+	  var long_sentiment = [
+	  {% for data in timeseries_data.itertuples %}
+    {x: new Date("{{ data.datetime }}"), y: {{ data.long_sentiment }},},{% endfor %}
+	  ]
+</script>
+<script src="{% static '/js/charts/bar-category.js' %}"></script>
+<script src="{% static '/js/charts/pie-category.js' %}"></script>
+<script src="{% static '/js/charts/timeline.js' %}"></script>
+
+
+{% endblock%}

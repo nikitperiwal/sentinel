@@ -1,0 +1,196 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block headfiles %}
+{% endblock %}
+
+{% block analytics-status %}
+"active"
+{% endblock %}
+
+{% block content %}
+<div class="content">
+	<div class="row">
+		<div class="col">
+			<div id="timeline-card"
+			     class="card"
+			     style="height: 95%; min-height: 400px;">
+				<div class="card-header">
+					<div class="row">
+						<div class="col-sm-5 text-left">
+							<h4 class="card-title">
+								<i
+										class="fas fa-chart-line text-primary"
+										style="font-size: 1rem;"
+								></i>
+								Sentiment Time-graph
+							</h4>
+						</div>
+						<div class="col-sm-7">
+							<div
+									class="btn-group btn-group-toggle float-right"
+									data-toggle="buttons">
+								<label class="btn btn-sm btn-primary btn-simple"
+								       id="0">
+									<input type="radio"
+									       name="options"
+									       checked/>
+									<span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">1 Month</span>
+									<span class="d-block d-sm-none">1M</span>
+								</label>
+								<label class="btn btn-sm btn-primary btn-simple"
+								       id="1">
+									<input
+											type="radio"
+											class="d-none d-sm-none"
+											name="options"/>
+									<span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">2 Months</span>
+									<span class="d-block d-sm-none">2M</span>
+								</label>
+								<label class="btn btn-sm btn-primary btn-simple"
+								       id="2">
+									<input type="radio"
+									       class="d-none"
+									       name="options"/>
+									<span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">3 Months</span>
+									<span class="d-block d-sm-none">3M</span>
+								</label>
+								<label
+										class="btn btn-sm btn-primary btn-simple active"
+										id="3">
+									<input type="radio"
+									       class="d-none"
+									       name="options"/>
+									<span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">All</span>
+									<span class="d-block d-sm-none">All</span>
+								</label>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="card-body">
+					<div class="chart-area"
+					     style="height: 90%; padding: 10px;">
+						<div class="row"
+						     style="position: relative; height: 70%; width: 100%;">
+							<canvas id="chart-timeline-sentiment"></canvas>
+						</div>
+						<div class="row"
+						     style="position: relative; height: 40%;">
+							<canvas id="chart-timeline-volume"></canvas>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="col-sm-12 col-md-6">
+			<div class="card"
+			     style="background: transparent; box-shadow: none;">
+				<div class="card-header">
+					<h3 class="card-title">Distribution Graphs</h3>
+				</div>
+				<div class="card-body">
+					<label for="plot-type"
+					       style="padding-right: 5px;">Plot Type: </label>
+					<select class="form-control"
+					        id="plot-type">
+						<option value="Box-Plot">Box-Plot</option>
+						<option value="Histogram">Histogram</option>
+						<option value="Violin-Plot">Violin-Plot</option>
+					</select>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="col-sm-12 col-md-6 col-lg-4">
+			<div class="card card-chart">
+				<div class="card-header">
+					<h4 class="card-title">
+						Likes Distribution
+					</h4>
+				</div>
+				<div class="card-body">
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-12 col-md-6 col-lg-4">
+			<div class="card card-chart">
+				<div class="card-header">
+					<h4 class="card-title">
+						Retweets Distribution
+					</h4>
+				</div>
+				<div class="card-body">
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-12 col-md-6 col-lg-4">
+			<div class="card card-chart">
+				<div class="card-header">
+					<h4 class="card-title">
+						Comments Distribution
+					</h4>
+				</div>
+				<div class="card-body">
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-12 col-md-6">
+			<div class="card card-chart">
+				<div class="card-header">
+					<h4 class="card-title">
+						Word Length Distribution
+					</h4>
+				</div>
+				<div class="card-body">
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-12 col-md-6">
+			<div class="card card-chart">
+				<div class="card-header">
+					<h4 class="card-title">
+						Char Length Distribution
+					</h4>
+				</div>
+				<div class="card-body">
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock%}
+
+
+{% block javascript %}
+<!--Resize chart cards-->
+<script>
+    $(".card-chart").css('height', $(".card-chart").width()*0.7);
+    window.addEventListener("resize", setChartHeight);
+    function setChartHeight(){
+        $(".card-chart").css('height', $(".card-chart").width()*0.7);
+    }
+</script>
+
+<!-- Defining chart data variables -->
+<script>
+var volumedata = [
+    {% for data in timeseries_data.itertuples %}
+    {x: new Date("{{ data.datetime }}"), y: {{ data.volume }},},{% endfor %}
+	  ]
+var short_sentiment = [
+	  {% for data in timeseries_data.itertuples %}
+    {x: new Date("{{ data.datetime }}"), y: {{ data.short_sentiment }},},{% endfor %}
+	  ]
+var long_sentiment = [
+	  {% for data in timeseries_data.itertuples %}
+    {x: new Date("{{ data.datetime }}"), y: {{ data.long_sentiment }},},{% endfor %}
+	  ]
+</script>
+<script src="{% static '/js/charts/timeline.js' %}"></script>
+{% endblock%}

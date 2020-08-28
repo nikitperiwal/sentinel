@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block headfiles %}
+{% endblock %}
+
+{% block support-status %}
+"active"
+{% endblock %}
+
+{% block content %}
+<div class="content">
+	<div class="row">
+		<div class="col-sm-12 col-md-6 col-lg-4">
+			<div class="card">
+				<div class="card-header">
+					<h4 class="card-title">
+						<i
+								class="fas fa-newspaper"
+								style="font-size: 1rem; padding-right: 10px;"
+						></i>
+						About this Webapp
+					</h4>
+				</div>
+				<div class="card-body">
+				</div>
+			</div>
+		</div>
+		
+		<div class="col-sm-12 col-md-6 col-lg-4">
+			<div class="card">
+				<div class="card-header">
+					<h4 class="card-title">
+						<i
+								class="fab fa-github"
+								style="font-size: 1rem; padding-right: 10px;"
+						></i>
+						GitHub Repo
+					</h4>
+				</div>
+				<div class="card-body">
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-12 col-md-6 col-lg-4">
+			<div class="card">
+				<div class="card-header">
+					<h4 class="card-title">
+						<i
+								class="fas fa-paper-plane"
+								style="font-size: 1rem; padding-right: 10px;"
+						></i>
+						Mail Us
+					</h4>
+				</div>
+				<div class="card-body">
+					<a href="mailto:nikit.periwal@gmail.com?subject=Report%20Sentinel%20Issue">
+						<button class="btn btn-sm btn-primary btn-simple">Report Issue</button>
+					</a>
+					<a href="mailto:nikit.periwal@gmail.com?subject=Report%20Sentinel%20Issue">
+						<button class="btn btn-sm btn-primary btn-simple">Contact Us</button>
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock%}
+
+{% block javascript %}
+{% endblock%}

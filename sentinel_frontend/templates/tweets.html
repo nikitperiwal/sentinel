@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% load static %}
+
+<!-- ADD SORTING OPTIONS NOT PRESENT IN DATATABLES | DOWNLOAD DATA BUTTON -->
+
+{% block headfiles %}
+<link href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css"
+      rel="stylesheet"
+      crossorigin="anonymous">
+<link href="{% static '/css/dataTable.css' %}" rel="stylesheet"/>
+{% endblock %}
+
+{% block tweets-status %}
+"active"
+{% endblock %}
+
+{% block content %}
+<div class="content">
+	<div class="row">
+		<div class="col">
+			<div class="card" style="padding: 5px;">
+				<div class="card-header">
+					<div class="row">
+						<div class="col">
+							<h4 class="card-title"> Tweet Data</h4>
+						</div>
+						<div class="col">
+							<button class="btn btn-sm btn-primary btn-simple float-right">
+								Download Data
+							</button>
+						</div>
+					</div>
+				</div>
+				<div class="card-body">
+					<div class="table-responsive">
+						<table class="table table-striped"
+						       id="tweettable">
+							<thead>
+							<tr>
+								<th class="text-center">#</th>
+								<th> Datetime</th>
+								<th> Username</th>
+								<th> Tweet</th>
+								<th> Likes</th>
+								<th> Retweets</th>
+								<th> Replies</th>
+								<th> Sentiment</th>
+								<th></th>
+							</tr>
+							</thead>
+							
+							<tbody>
+							{% for tweet in tweetDF.itertuples %}
+							<tr>
+								<td>{{ forloop.counter }}</td>
+								<td>{{ tweet.datetime }}</td>
+								<td>{{ tweet.username }}</td>
+								<td>{{ tweet.text|safe }}</td>
+								<td>{{ tweet.likes }}</td>
+								<td>{{ tweet.retweets }}</td>
+								<td>{{ tweet.replies }}</td>
+								<td>
+									{% if tweet.sentiment > 0 %}
+									<i class="fas fa-thumbs-up"
+									   style="font-size: 1.3rem; color: teal;"></i>
+									{% else %}
+									<i class="fas fa-thumbs-down"
+									   style="font-size: 1.3rem; color: indianred;"></i>
+									{% endif %}
+								</td>
+								<td>
+									<a href="{{ tweet.tweet_url|safe }}"
+									   target="_blank">
+										<i class="fas fa-external-link-square-alt"
+										   style="font-size: 1.3rem; color: #ccc;"></i>
+									</a>
+								</td>
+							</tr>
+							{% endfor %}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock%}
+
+{% block javascript %}
+<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"
+        crossorigin="anonymous"></script>
+<script>
+$(document).ready( function () {
+    $('#tweettable').DataTable();
+} );
+
+</script>
+{% endblock%}
+ 
