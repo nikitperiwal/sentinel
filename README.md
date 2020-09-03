@@ -1,5 +1,4 @@
 ![alt text](https://github.com/nikitperiwal/sentinel/blob/master/sentinel_frontend/static/img/sentinel.png?raw=true)
-
 ### Twitter Sentiment Web-app
 
 > Web-App that can scrape tweets from twitter and provide valuable insights on the tweet data
@@ -14,16 +13,11 @@
 [![GitHub pull-requests](https://img.shields.io/github/issues-pr/nikitperiwal/sentinel)](https://github.com/nikitperiwal/sentinel/pulls)
 [![GitHub pull-requests closed](https://img.shields.io/github/issues-pr-closed/nikitperiwal/sentinel)](https://github.com/nikitperiwal/sentinel/pulls?q=is%3Apr+is%3Aclosed)
 
-
 [![INSERT YOUR GRAPHIC HERE](https://i.imgur.com/k1sCYAe.png)]()
 
 
-> GIF Tools
-
-- Use <a href="http://recordit.co/" target="_blank">**Recordit**</a> to create quicks screencasts of your desktop and export them as `GIF`s.
-- For terminal sessions, there's <a href="https://github.com/chjj/ttystudio" target="_blank">**ttystudio**</a> which also supports exporting `GIF`s.
-
 **Recordit**
+- Use <a href="http://recordit.co/" target="_blank">**Recordit**</a> to create quicks screencasts of your desktop and export them as `GIF`s.
 
 ![Recordit GIF](http://g.recordit.co/iLN6A0vSD8.gif)
 
