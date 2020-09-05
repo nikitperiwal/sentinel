@@ -46,7 +46,9 @@ class TweetClass:
             'volume'         : volumedata,
         })
     
-    
+    def get_hashtags_mentions(self):
+        
+        return hashtags, mentions
     
     def get_context(self):
         if len(self.tweet_df) == 0:
@@ -57,8 +59,6 @@ class TweetClass:
         self.context['timeseries_data'] = self.get_timeline_data()
         return self.context
     
-
-
 """
 Time series:
 -------------
