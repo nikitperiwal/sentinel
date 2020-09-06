@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.http import HttpResponse
 from twitter_sentiment.tweets import TweetClass
 
 t = TweetClass()
@@ -35,3 +36,10 @@ def visualclouds(request):
 
 def support(request):
 	return render(request, "support.html")
+
+
+def download_data(request):
+	resp = HttpResponse(content_type='text/csv')
+	resp['Content-Disposition'] = 'attachment; filename=tweetData.csv'
+	t.tweet_df.to_csv(path_or_buf=resp, sep=',', index=False)
+	return resp

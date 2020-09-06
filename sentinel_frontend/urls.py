@@ -26,4 +26,5 @@ urlpatterns = [
     path('analytics/', views.analytics, name="analytics"),
     path('visual-clouds/', views.visualclouds, name="visualclouds"),
     path('support/', views.support, name="support"),
+    path('download-data/', views.download_data, name="download"),
 ]
