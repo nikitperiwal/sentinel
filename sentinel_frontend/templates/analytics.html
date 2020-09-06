@@ -2,6 +2,13 @@
 {% load static %}
 
 {% block headfiles %}
+<style>
+	option { background: #27293f;}
+	.group-graphs { padding: 20px 0px;}
+
+
+
+</style>
 {% endblock %}
 
 {% block analytics-status %}
@@ -84,87 +91,155 @@
 			</div>
 		</div>
 	</div>
-	
-	<div class="content">
-		<div class="row">
-			<div class="col-sm-12 col-md-6">
-				<div class="card"
-				     style="background: transparent; box-shadow: none;">
-					<div class="card-header">
-						<h3 class="card-title">Distribution Graphs</h3>
-					</div>
-					<div class="card-body">
-						<label for="plot-type"
-						       style="padding-right: 5px;">Plot Type: </label>
-						<select class="form-control"
-						        id="plot-type">
-							<option value="Box-Plot">Box-Plot</option>
-							<option value="Histogram">Histogram</option>
-							<option value="Violin-Plot">Violin-Plot</option>
-						</select>
-					</div>
+	<div class="row">
+		<div class="col">
+			<div class="graph-group">
+				<div class="group-heading">
+					<h3>Distribution Graphs</h3>
 				</div>
-			</div>
-		</div>
-		
-		<div class="row">
-			<div class="col-sm-12 col-md-6 col-lg-4">
-				<div class="card card-chart">
-					<div class="card-header">
-						<h4 class="card-title">
-							Likes Distribution
-						</h4>
-					</div>
-					<div class="card-body">
-					</div>
+				<div class="group-options">
+					<label for="freq-type"
+					       style="padding-right: 5px;"><p>Plot Type:</p></label>
+					<select class="form-control"
+					        style="max-width: 300px;"
+					        id="plot-type">
+						<option value="Box-Plot">Box-Plot</option>
+						<option value="Histogram">Histogram</option>
+						<option value="Violin-Plot">Violin-Plot</option>
+					</select>
 				</div>
-			</div>
-			<div class="col-sm-12 col-md-6 col-lg-4">
-				<div class="card card-chart">
-					<div class="card-header">
-						<h4 class="card-title">
-							Retweets Distribution
-						</h4>
-					</div>
-					<div class="card-body">
-					</div>
-				</div>
-			</div>
-			<div class="col-sm-12 col-md-6 col-lg-4">
-				<div class="card card-chart">
-					<div class="card-header">
-						<h4 class="card-title">
-							Comments Distribution
-						</h4>
-					</div>
-					<div class="card-body">
-					</div>
-				</div>
-			</div>
-			<div class="col-sm-12 col-md-6">
-				<div class="card card-chart">
-					<div class="card-header">
-						<h4 class="card-title">
-							Word Length Distribution
-						</h4>
-					</div>
-					<div class="card-body">
-					</div>
-				</div>
-			</div>
-			<div class="col-sm-12 col-md-6">
-				<div class="card card-chart">
-					<div class="card-header">
-						<h4 class="card-title">
-							Char Length Distribution
-						</h4>
-					</div>
-					<div class="card-body">
+				<div class="group-graphs">
+					<div class="row">
+						<div class="col-sm-12 col-md-6 col-lg-4">
+							<div class="card card-chart">
+								<div class="card-header">
+									<h4 class="card-title">
+										Likes Distribution
+									</h4>
+								</div>
+								<div class="card-body">
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-12 col-md-6 col-lg-4">
+							<div class="card card-chart">
+								<div class="card-header">
+									<h4 class="card-title">
+										Retweets Distribution
+									</h4>
+								</div>
+								<div class="card-body">
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-12 col-md-6 col-lg-4">
+							<div class="card card-chart">
+								<div class="card-header">
+									<h4 class="card-title">
+										Comments Distribution
+									</h4>
+								</div>
+								<div class="card-body">
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-12 col-md-6">
+							<div class="card card-chart">
+								<div class="card-header">
+									<h4 class="card-title">
+										Word Length Distribution
+									</h4>
+								</div>
+								<div class="card-body">
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-12 col-md-6">
+							<div class="card card-chart">
+								<div class="card-header">
+									<h4 class="card-title">
+										Char Length Distribution
+									</h4>
+								</div>
+								<div class="card-body">
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+	
+	<div class="row">
+		<div class="col">
+			<div class="graph-group">
+				<div class="group-heading">
+					<h3>Frequency Graphs</h3>
+				</div>
+				<div class="group-options">
+					<label for="freq-type"
+					       style="padding-right: 5px;"><p>Sentiment:</p></label>
+					<select class="form-control"
+					        style="max-width: 300px;"
+					        id="freq-type">
+						<option value="All">All</option>
+						<option value="Positive">Positive</option>
+						<option value="Negative">Negative</option>
+					</select>
+				</div>
+				<div class="group-graphs">
+					<div class="row">
+						<div class="col-sm-12 col-md-6 col-lg-4">
+							<div class="card">
+								<div class="card card-chart">
+									<div class="card-header">
+										<h4 class="card-title">
+											Words Frequency
+										</h4>
+									</div>
+									<div class="card-body">
+										<canvas id="chart-word-frequency"></canvas>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-12 col-md-6 col-lg-4">
+							<div class="card">
+								<div class="card card-chart">
+									<div class="card-header">
+										<h4 class="card-title">
+											Hashtags Frequency
+										</h4>
+									</div>
+									<div class="card-body">
+										<canvas id="chart-hashtag-frequency"></canvas>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-12 col-md-6 col-lg-4">
+							<div class="card">
+								<div class="card card-chart">
+									<div class="card-header">
+										<h4 class="card-title">
+											Mentions Frequency
+										</h4>
+									</div>
+									<div class="card-body">
+										<canvas id="chart-mention-frequency"></canvas>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		
+		
+		</div>
+	</div>
+	
 </div>
 {% endblock%}
 
@@ -177,7 +252,6 @@
     function setChartHeight(){
         $(".card-chart").css('height', $(".card-chart").width()*0.7);
     }
-
 </script>
 
 <!-- Defining chart data variables -->
@@ -194,7 +268,6 @@ var long_sentiment = [
 	  {% for data in timeseries_data.itertuples %}
     {x: new Date("{{ data.datetime }}"), y: {{ data.long_sentiment }},},{% endfor %}
 	  ]
-
 </script>
 <script src="{% static '/js/charts/timeline.js' %}"></script>
 {% endblock%}
