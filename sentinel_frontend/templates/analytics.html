@@ -5,9 +5,6 @@
 <style>
 	option { background: #27293f;}
 	.group-graphs { padding: 20px 0px;}
-
-
-
 </style>
 {% endblock %}
 
@@ -91,6 +88,7 @@
 			</div>
 		</div>
 	</div>
+	
 	<div class="row">
 		<div class="col">
 			<div class="graph-group">
@@ -98,15 +96,31 @@
 					<h3>Distribution Graphs</h3>
 				</div>
 				<div class="group-options">
-					<label for="freq-type"
-					       style="padding-right: 5px;"><p>Plot Type:</p></label>
-					<select class="form-control"
-					        style="max-width: 300px;"
-					        id="plot-type">
-						<option value="Box-Plot">Box-Plot</option>
-						<option value="Histogram">Histogram</option>
-						<option value="Violin-Plot">Violin-Plot</option>
-					</select>
+					<div class="row">
+						<div class="col-4">
+							<label for="plot-type"
+							       style="padding-right: 5px;"><p>Plot Type:</p></label>
+							<select class="form-control"
+							        style="max-width: 300px;"
+							        id="plot-type">
+								<option value="Histogram">Histogram</option>
+								<option value="Box-Plot">Box-Plot</option>
+								<option value="Violin-Plot">Violin-Plot</option>
+							</select>
+						</div>
+						<div class="col-4">
+							<label for="sentiment-type"
+							       style="padding-right: 5px;"><p>Sentiment:</p></label>
+							<select class="form-control"
+							        style="max-width: 300px;"
+							        id="sentiment-type">
+								<option value="All">All</option>
+								<option value="Positive">Positive</option>
+								<option value="Negative">Negative</option>
+								<option value="Compare">Compare</option>
+							</select>
+						</div>
+					</div>
 				</div>
 				<div class="group-graphs">
 					<div class="row">
@@ -118,6 +132,7 @@
 									</h4>
 								</div>
 								<div class="card-body">
+									<canvas id="chart-likes-distribution"></canvas>
 								</div>
 							</div>
 						</div>
@@ -129,6 +144,7 @@
 									</h4>
 								</div>
 								<div class="card-body">
+									<canvas id="chart-retweets-distribution"></canvas>
 								</div>
 							</div>
 						</div>
@@ -140,6 +156,7 @@
 									</h4>
 								</div>
 								<div class="card-body">
+									<canvas id="chart-comments-distribution"></canvas>
 								</div>
 							</div>
 						</div>
@@ -151,6 +168,7 @@
 									</h4>
 								</div>
 								<div class="card-body">
+									<canvas id="chart-wordlength-distribution"></canvas>
 								</div>
 							</div>
 						</div>
@@ -162,6 +180,7 @@
 									</h4>
 								</div>
 								<div class="card-body">
+									<canvas id="chart-charlength-distribution"></canvas>
 								</div>
 							</div>
 						</div>
@@ -239,7 +258,6 @@
 		
 		</div>
 	</div>
-	
 </div>
 {% endblock%}
 
