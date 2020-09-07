@@ -286,6 +286,20 @@ var long_sentiment = [
 	  {% for data in timeseries_data.itertuples %}
     {x: new Date("{{ data.datetime }}"), y: {{ data.long_sentiment }},},{% endfor %}
 	  ]
+	  
+var words_name = {{ words_freq_all.0|safe }}
+var words_freq = {{ words_freq_all.1 }}
+var positive_name = {{ words_freq_positive.0|safe }}
+var positive_freq = {{ words_freq_positive.1 }}
+var negative_name = {{ words_freq_negative.0|safe }}
+var negative_freq = {{ words_freq_negative.1 }}
+
+var hashtag_name = {{ hashtag.0|safe }}
+var hashtag_freq = {{ hashtag.1 }}
+
+var mention_name = {{ mention.0|safe }}
+var mention_freq = {{ mention.1 }}
+
 </script>
 <script src="{% static '/js/charts/timeline.js' %}"></script>
 {% endblock%}

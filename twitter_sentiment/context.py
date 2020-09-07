@@ -2,6 +2,12 @@ import re
 from collections import defaultdict, Counter
 
 
+def format_dict(d):
+	name = list(d.keys())
+	freq = list(d.values())
+	return [name, freq]
+	
+
 def divide_data(dataframe, num_words=200, unique=True):
 	positive = " ".join(dataframe[dataframe.sentiment == 1].processed_text).split()
 	negative = " ".join(dataframe[dataframe.sentiment == -1].processed_text).split()
@@ -35,7 +41,13 @@ def divide_data(dataframe, num_words=200, unique=True):
 	common_positive = dict(Counter(positive_dict).most_common(num_words))
 	common_negative = dict(Counter(negative_dict).most_common(num_words))
 	
-	return common_positive, common_negative
+	return format_dict(common_positive), format_dict(common_negative)
+
+
+def get_words(text_list, num_words=50):
+	word_list = " ".join(text_list).split()
+	word_list = dict(Counter(word_list).most_common(num_words))
+	return format_dict(word_list)
 
 
 def get_mentions(text_list, num_words=50):
@@ -47,7 +59,7 @@ def get_mentions(text_list, num_words=50):
 		mentions.extend(users)
 	
 	mentions = dict(Counter(mentions).most_common(num_words))
-	return mentions
+	return format_dict(mentions)
 
 
 def get_hashtags(text_list, num_words=50):
@@ -59,10 +71,4 @@ def get_hashtags(text_list, num_words=50):
 		hashtags.extend(tags)
 	
 	hashtags = dict(Counter(hashtags).most_common(num_words))
-	return hashtags
-
-
-def get_words(text_list, num_words=50):
-	word_list = " ".join(text_list).split()
-	word_list = dict(Counter(word_list).most_common(num_words))
-	return word_list
+	return format_dict(hashtags)

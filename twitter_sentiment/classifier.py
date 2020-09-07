@@ -74,11 +74,11 @@ def process_text(textdata):
 def predict(text):
     if isinstance(text, str):
         text = list(text, )
-    text = process_text(text)
-    text = vectoriser.transform(text)
+    processed_text = process_text(text)
+    text = vectoriser.transform(processed_text)
     sentiment = model.predict(text)
     sentiment = interp(sentiment, (0, 1), (-1, +1))
-    return sentiment
+    return processed_text, sentiment
 
 
 if __name__ == "__main__":
