@@ -57,11 +57,11 @@ class TweetClass:
 		self.context['pie_data'] = self.get_sentiment_count()
 		self.context['timeseries_data'] = self.get_timeline_data()
 		
-		self.context['words_freq_all'] = get_words(self.tweet_df.processed_text, num_words=50)
-		self.context['words_freq_positive'], self.context['words_freq_negative'] = divide_data(self.tweet_df, num_words=50)
+		self.context['words_freq_all'] = get_words(self.tweet_df.processed_text, num_words=30)
+		self.context['words_freq_positive'], self.context['words_freq_negative'] = divide_data(self.tweet_df, num_words=30)
 		
-		self.context['hashtag'] = get_hashtags(self.tweet_df.text, num_words=50)
-		self.context['mention'] = get_mentions(self.tweet_df.text, num_words=50)
+		self.context['hashtag'] = get_hashtags(self.tweet_df.text, num_words=30)
+		self.context['mention'] = get_mentions(self.tweet_df.text, num_words=30)
 		
 		return self.context
 

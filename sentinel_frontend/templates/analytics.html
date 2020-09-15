@@ -209,7 +209,7 @@
 				</div>
 				<div class="group-graphs">
 					<div class="row">
-						<div class="col-sm-12 col-md-6 col-lg-4">
+						<div class="col-12">
 							<div class="card">
 								<div class="card card-chart">
 									<div class="card-header">
@@ -223,7 +223,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="col-sm-12 col-md-6 col-lg-4">
+						<div class="col-sm-12 col-md-6">
 							<div class="card">
 								<div class="card card-chart">
 									<div class="card-header">
@@ -237,7 +237,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="col-sm-12 col-md-6 col-lg-4">
+						<div class="col-sm-12 col-md-6">
 							<div class="card">
 								<div class="card card-chart">
 									<div class="card-header">
@@ -254,8 +254,6 @@
 					</div>
 				</div>
 			</div>
-		
-		
 		</div>
 	</div>
 </div>
@@ -265,10 +263,10 @@
 {% block javascript %}
 <!--Resize chart cards-->
 <script>
-    $(".card-chart").css('height', $(".card-chart").width()*0.7);
+    $(".card-chart").css('height', $(".card-chart").width()*2);
     window.addEventListener("resize", setChartHeight);
     function setChartHeight(){
-        $(".card-chart").css('height', $(".card-chart").width()*0.7);
+        $(".card-chart").css('height', $(".card-chart").width()*2);
     }
 </script>
 
@@ -286,7 +284,7 @@ var long_sentiment = [
 	  {% for data in timeseries_data.itertuples %}
     {x: new Date("{{ data.datetime }}"), y: {{ data.long_sentiment }},},{% endfor %}
 	  ]
-	  
+
 var words_name = {{ words_freq_all.0|safe }}
 var words_freq = {{ words_freq_all.1 }}
 var positive_name = {{ words_freq_positive.0|safe }}
@@ -302,4 +300,7 @@ var mention_freq = {{ mention.1 }}
 
 </script>
 <script src="{% static '/js/charts/timeline.js' %}"></script>
+<script src="{% static '/js/charts/mentions-freq.js' %}"></script>
+<script src="{% static '/js/charts/hashtags-freq.js' %}"></script>
+<script src="{% static '/js/charts/word-freq.js' %}"></script>
 {% endblock%}
