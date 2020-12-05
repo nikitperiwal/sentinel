@@ -1,10 +1,10 @@
+from GetOldTweets3.manager import TweetCriteria, TweetManager
 from concurrent.futures.thread import ThreadPoolExecutor
 import pandas as pd
 import datetime as dt
-import tweepy
 
 
-def request(api, search_string, start_date, end_date, tweet_no):
+def request(search, start_date, end_date, tweet_no):
     """
     Request for tweets using 'GetOldTweets3' module.
     
@@ -20,29 +20,32 @@ def request(api, search_string, start_date, end_date, tweet_no):
         Number of tweets to scrap from the given time period
     """
 
-    tweets = tweepy.Cursor(api.search,
-                           q=search_string,
-                           lang="en",
-                           since=str(start_date),
-                           until=str(end_date),
-                           result_type='popular',
-                           tweet_mode='extended').items(tweet_no)
+    tc = TweetCriteria()
+    tc.setQuerySearch(search)
+    tc.setSince(str(start_date))
+    tc.setUntil(str(end_date))
+    tc.setLang("en")
+    tc.setTopTweets(True)
+    tc.setMaxTweets(tweet_no)
+    tweets = TweetManager.getTweets(tc)
+
     data = list()
     for tweet in tweets:
-        data.append((
-            tweet.created_at,
-            "https://twitter.com/twitter/statuses/"+str(tweet.id),
-            tweet.user.screen_name,
-            tweet.full_text.replace('\n', ''),
-            len(tweet.full_text),
-            len(tweet.full_text.split()),
-            tweet.favorite_count,
-            tweet.retweet_count
-        ))
+        data.append((str(tweet.date)[:19],
+                     tweet.permalink,
+                     tweet.username,
+                     tweet.text,
+                     len(tweet.text),
+                     len(tweet.text.split()),
+                     tweet.favorites,
+                     tweet.retweets,
+                     tweet.replies,
+                    ))
+
     return data
 
 
-def get_tweets(keywords, exclude_words=(), start_date='', end_date='', num_tweets=100):
+def get_tweets(keywords=[], exclude_words=[], start_date='', end_date='', num_tweets=100):
     """
     Get Tweets for passed keywords from given time period.
     Increases the speed of scraping by using threads.
@@ -84,27 +87,19 @@ def get_tweets(keywords, exclude_words=(), start_date='', end_date='', num_tweet
         
     day = dt.timedelta(1)
 
-    consumer_token = 'Yjv0aMEjAkGchu1Eblul7GcU0'
-    consumer_secret = '4Lo8mMPmaAeleBYk8U0lorj5ElaZDfCMwnHMYXI65QocoFwHTR'
-    access_token = '835280725859524609-OiNAwx9cqPnGH00EuXXCDeOsmQfGFoc'
-    access_token_secret = '2kmZhKlheAxDUSC7mkxXZj74gT7fVXXRSzExH6iHpK7ge'
-
-    auth = tweepy.OAuthHandler(consumer_token, consumer_secret)
-    auth.set_access_token(access_token, access_token_secret)
-    api = tweepy.API(auth)
-
     # Using Threading to improve speed.
     futurelist = list()
-    with ThreadPoolExecutor(max_workers=7) as executor:
+    with ThreadPoolExecutor(max_workers=20) as executor:
         while start_date <= end_date:
-            futurelist.append(executor.submit(request, api, search, start_date, start_date + day, num_tweets))
+            futurelist.append(executor.submit(request, search, start_date, start_date + day, num_tweets))
             start_date += day
     data = list()
     for x in futurelist:
         data.extend(x.result())
 
     # Create a pandas dataframe to store the tweets.
-    columns = ['datetime', 'tweet_url', 'username', 'text', 'char_length', 'word_length', 'likes', 'retweets']
+    columns = ['datetime', 'tweet_url', 'username', 'text', 'char_length', 'word_length',
+               'likes', 'retweets', 'replies']
     df = pd.DataFrame(data, columns=columns)
     df["datetime"] = pd.to_datetime(df["datetime"])
 
@@ -114,5 +109,5 @@ def get_tweets(keywords, exclude_words=(), start_date='', end_date='', num_tweet
 
 
 if __name__ == "__main__":
-    dframe = get_tweets(keywords=['Trump'], exclude_words=[], start_date='2020-12-01', end_date='2020-12-03')
-    print(dframe.head)
+    df = get_tweets(keywords=['Mahindra'], exclude_words=[], start_date='2020-01-01', end_date='2020-01-03', num_tweets=100)
+    print(df.head)

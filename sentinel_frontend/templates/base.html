@@ -57,6 +57,7 @@
                     </p>
                 </a>
             </li>
+            {% if ran_flag %}
             <li class={% block analytics-status %}{% endblock %}>
                 <a href="{% url 'sentinel_frontend:analytics' %}">
                     <i class="fas fa-chart-bar"></i>
@@ -73,6 +74,7 @@
                     </p>
                 </a>
             </li>
+            {% endif %}
             <li class={% block support-status %}{% endblock %}>
                 <a href="{% url 'sentinel_frontend:support' %}">
                     <i class="fas fa-headset"></i>

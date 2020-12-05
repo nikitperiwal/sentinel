@@ -52,6 +52,9 @@ class TweetClass:
 	def get_context(self):
 		if len(self.tweet_df) == 0:
 			return self.context
+		else:
+			self.context['flag'] = True
+
 		self.context['bar_data'] = self.get_sentiment_count()
 		self.context['bar_data'].append(sum(self.context['bar_data']))
 		self.context['pie_data'] = self.get_sentiment_count()
