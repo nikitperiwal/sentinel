@@ -1,85 +1,65 @@
 import re
 import pickle
-from numpy import interp
+import numpy as np
+import pandas as pd
+from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing.sequence import pad_sequences
 
-# Defining dictionary containing all emojis with their meanings.
-emojis = {':)': 'smile', ':-)': 'smile', ';d': 'wink', ':-E': 'vampire', ':(': 'sad',
-          ':-(': 'sad', ':-<': 'sad', ':P': 'raspberry', ':O': 'surprised',
-          ':-@': 'shocked', ':@': 'shocked', ':-$': 'confused', ':\\': 'annoyed',
-          ':#': 'mute', ':X': 'mute', ':^)': 'smile', ':-&': 'confused', '$_$': 'greedy',
-          '@@': 'eyeroll', ':-!': 'confused', ':-D': 'smile', ':-0': 'yell', 'O.o': 'confused',
-          '<(-_-)>': 'robot', 'd[-_-]b': 'dj', ":'-)": 'sadsmile', ';)': 'wink',
-          ';-)': 'wink', 'O:-)': 'angel', 'O*-)': 'angel', '(:-D': 'gossip', '=^.^=': 'cat'}
+with open('twitter_sentiment/models/Tokenizer.pickle', 'rb') as file:
+    tokenizer = pickle.load(file)
+model = load_model('twitter_sentiment/models/Twitter-Sentiment-BiLSTM.h5')
 
-# Defining set containing all stopwords in english.
-stopwordlist = ['a', 'about', 'above', 'after', 'again', 'ain', 'all', 'am', 'an',
-                'and', 'any', 'are', 'as', 'at', 'be', 'because', 'been', 'before',
-                'being', 'below', 'between', 'both', 'by', 'can', 'd', 'did', 'do',
-                'does', 'doing', 'down', 'during', 'each', 'few', 'for', 'from',
-                'further', 'had', 'has', 'have', 'having', 'he', 'her', 'here',
-                'hers', 'herself', 'him', 'himself', 'his', 'how', 'i', 'if', 'in',
-                'into', 'is', 'it', 'its', 'itself', 'just', 'll', 'm', 'ma',
-                'me', 'more', 'most', 'my', 'myself', 'now', 'o', 'of', 'on', 'once',
-                'only', 'or', 'other', 'our', 'ours', 'ourselves', 'out', 'own', 're',
-                's', 'same', 'she', "shes", 'should', "shouldve", 'so', 'some', 'such',
-                't', 'than', 'that', "thatll", 'the', 'their', 'theirs', 'them',
-                'themselves', 'then', 'there', 'these', 'they', 'this', 'those',
-                'through', 'to', 'too', 'under', 'until', 'up', 've', 'very', 'was',
-                'we', 'were', 'what', 'when', 'where', 'which', 'while', 'who', 'whom',
-                'why', 'will', 'with', 'won', 'y', 'you', "youd", "youll", "youre",
-                "youve", 'your', 'yours', 'yourself', 'yourselves']
+# Reading contractions.csv and storing it as a dict.
+contractions = pd.read_csv('twitter_sentiment/models/contractions.csv', index_col='Contraction')
+contractions.index = contractions.index.str.lower()
+contractions.Meaning = contractions.Meaning.str.lower()
+contractions_dict = contractions.to_dict()['Meaning']
+
+# Defining regex patterns.
+urlPattern = r"((http://)[^ ]*|(https://)[^ ]*|(www\.)[^ ]*)"
+userPattern = r'@[^\s]+'
+hashtagPattern = r'#[^\s]+'
+alphaPattern = r"[^a-z0-9<>]"
+sequencePattern = r"(.)\1\1+"
+seqReplacePattern = r"\1\1"
+
+# Defining regex for emojis
+smileemoji = r"[8:=;]['`\-]?[)d]+"
+sademoji = r"[8:=;]['`\-]?\(+"
+neutralemoji = r"[8:=;]['`\-]?[\/|l*]"
+lolemoji = r"[8:=;]['`\-]?p+"
 
 
-with open('twitter_sentiment/models/vectoriser-ngram-(1,2).pickle', 'rb') as file:
-    vectoriser = pickle.load(file)
-with open('twitter_sentiment/models/Sentiment-LR.pickle', 'rb') as file:
-    model = pickle.load(file)
-
-def process_text(textdata):
-    processedText = []
-
-    # Defining regex patterns.
-    urlPattern = r"((http://)[^ ]*|(https://)[^ ]*|( www\.)[^ ]*)"
-    userPattern = r'@[^\s]+'
-    alphaPattern = "[^a-zA-Z0-9]"
-    sequencePattern = r"(.)\1\1+"
-    seqReplacePattern = r"\1\1"
-
-    for tweet in textdata:
-        tweet = tweet.lower()
-
-        # Replace all URls with 'URL'
-        tweet = re.sub(urlPattern, ' URL', tweet)
-        # Replace all emojis.
-        for emoji in emojis.keys():
-            tweet = tweet.replace(emoji, "EMOJI" + emojis[emoji])
-            # Replace @USERNAME to 'USER'.
-        tweet = re.sub(userPattern, ' USER', tweet)
-        # Replace all non alphabets.
-        tweet = re.sub(alphaPattern, " ", tweet)
-        # Replace 3 or more consecutive letters by 2 letter.
-        tweet = re.sub(sequencePattern, seqReplacePattern, tweet)
-
-        tweetwords = ''
-        for word in tweet.split():
-            # Checking if the word is a stopword.
-            if word not in stopwordlist:
-                if len(word) > 1:
-                    tweetwords += (word + ' ')
-
-        processedText.append(tweetwords)
-    return processedText
+def preprocess_apply(tweet):
+    tweet = tweet.lower()
+    # Replace all URls with '<url>'
+    tweet = re.sub(urlPattern, '<url>', tweet)
+    # Replace @USERNAME to '<user>'.
+    tweet = re.sub(userPattern, '<user>', tweet)
+    # Replace #Hashtags to '<hashtags>'.
+    tweet = re.sub(userPattern, '<hashtag>', tweet)
+    # Replace 3 or more consecutive letters by 2 letter.
+    tweet = re.sub(sequencePattern, seqReplacePattern, tweet)
+    # Replace all emojis.
+    tweet = re.sub(r'<3', '<heart>', tweet)
+    tweet = re.sub(smileemoji, '<smile>', tweet)
+    tweet = re.sub(sademoji, '<sadface>', tweet)
+    tweet = re.sub(neutralemoji, '<neutralface>', tweet)
+    tweet = re.sub(lolemoji, '<lolface>', tweet)
+    for contraction, replacement in contractions_dict.items():
+        tweet = tweet.replace(contraction, replacement)
+    # Remove non-alphanumeric and symbols
+    tweet = re.sub(alphaPattern, ' ', tweet)
+    # Adding space on either side of '/' to seperate words (After replacing URLS).
+    tweet = re.sub(r'/', ' / ', tweet)
+    return tweet
 
 
 def predict(text):
     if isinstance(text, str):
         text = list(text, )
-    processed_text = process_text(text)
-    text = vectoriser.transform(processed_text)
+    processed_text = [preprocess_apply(t) for t in text]
+    text = pad_sequences(tokenizer.texts_to_sequences(processed_text), maxlen=60)
     sentiment = model.predict(text)
-    sentiment = interp(sentiment, (0, 1), (-1, +1))
+    sentiment = np.where(sentiment > 0.5, 1, -1)
     return processed_text, sentiment
-
-
-if __name__ == "__main__":
-    pass

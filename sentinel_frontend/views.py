@@ -5,6 +5,7 @@ from twitter_sentiment.tweets import TweetClass
 t = TweetClass()
 ran_flag = False
 
+
 def dashboard(request):
 	global ran_flag
 	if request.method == "POST":
@@ -41,7 +42,9 @@ def visualclouds(request):
 
 
 def support(request):
-	return render(request, "support.html")
+	context = dict()
+	context['ran_flag'] = ran_flag
+	return render(request, "support.html", context)
 
 
 def download_data(request):
