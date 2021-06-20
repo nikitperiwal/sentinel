@@ -49,6 +49,7 @@
                     </p>
                 </a>
             </li>
+            {% if ran_flag %}
             <li class={% block tweets-status %}{% endblock %}>
                 <a href="{% url 'sentinel_frontend:tweets' %}">
                     <i class="fab fa-twitter"></i>
@@ -57,7 +58,6 @@
                     </p>
                 </a>
             </li>
-            {% if ran_flag %}
             <li class={% block analytics-status %}{% endblock %}>
                 <a href="{% url 'sentinel_frontend:analytics' %}">
                     <i class="fas fa-chart-bar"></i>
