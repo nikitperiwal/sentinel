@@ -1,7 +1,8 @@
-from concurrent.futures.thread import ThreadPoolExecutor
+import datetime
 import pandas as pd
 import datetime as dt
 import tweepy
+from concurrent.futures.thread import ThreadPoolExecutor
 
 
 def request(api, search_string, start_date, end_date, tweet_no):
@@ -84,10 +85,13 @@ def get_tweets(keywords, exclude_words=(), start_date='', end_date='', num_tweet
         
     day = dt.timedelta(1)
 
-    consumer_token = 'Yjv0aMEjAkGchu1Eblul7GcU0'
-    consumer_secret = '4Lo8mMPmaAeleBYk8U0lorj5ElaZDfCMwnHMYXI65QocoFwHTR'
-    access_token = '835280725859524609-OiNAwx9cqPnGH00EuXXCDeOsmQfGFoc'
-    access_token_secret = '2kmZhKlheAxDUSC7mkxXZj74gT7fVXXRSzExH6iHpK7ge'
+    # Reading the credentials for twitter api
+    with open("twitter_sentiment/twitter-creds.txt", 'r') as file:
+        creds = file.read().split('\n')
+        consumer_token = creds[0]
+        consumer_secret = creds[1]
+        access_token = creds[2]
+        access_token_secret = creds[3]
 
     auth = tweepy.OAuthHandler(consumer_token, consumer_secret)
     auth.set_access_token(access_token, access_token_secret)
@@ -99,6 +103,8 @@ def get_tweets(keywords, exclude_words=(), start_date='', end_date='', num_tweet
         while start_date <= end_date:
             futurelist.append(executor.submit(request, api, search, start_date, start_date + day, num_tweets))
             start_date += day
+
+    # Collecting the data from the threads
     data = list()
     for x in futurelist:
         data.extend(x.result())
@@ -114,5 +120,7 @@ def get_tweets(keywords, exclude_words=(), start_date='', end_date='', num_tweet
 
 
 if __name__ == "__main__":
-    dframe = get_tweets(keywords=['Trump'], exclude_words=[], start_date='2020-12-01', end_date='2020-12-03')
+    dframe = get_tweets(keywords=['Trump'], exclude_words=[],
+                        start_date='2021-06-28', end_date='2021-06-29',
+                        num_tweets=10)
     print(dframe.head)

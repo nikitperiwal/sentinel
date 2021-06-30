@@ -63,7 +63,7 @@
 									name="dailyNum"
 									type="number"
 									class="form-control"
-									value="50"
+									value="20"
 							/>
 							<button type="submit"
 							        class="btn btn-primary animation-on-hover">
@@ -74,6 +74,7 @@
 				</div>
 			</div>
 		</div>
+		{% if ran_flag %}
 		<div class="col">
 			<div id="timeline-card"
 			     class="card"
@@ -89,6 +90,7 @@
 								Sentiment Time-graph
 							</h4>
 						</div>
+						<!--
 						<div class="col-sm-7">
 							<div
 									class="btn-group btn-group-toggle float-right"
@@ -129,6 +131,7 @@
 								</label>
 							</div>
 						</div>
+						-->
 					</div>
 				</div>
 				<div class="card-body">
@@ -146,8 +149,9 @@
 				</div>
 			</div>
 		</div>
+		{% endif %}
 	</div>
-	
+	{% if ran_flag %}
 	<div class="row">
 		<div class="col-12 col-sm-6">
 			<div id="bar-card"
@@ -191,6 +195,7 @@
 			</div>
 		</div>
 	</div>
+	{% endif %}
 </div>
 {% endblock%}
 
@@ -242,6 +247,4 @@
 <script src="{% static '/js/charts/bar-category.js' %}"></script>
 <script src="{% static '/js/charts/pie-category.js' %}"></script>
 <script src="{% static '/js/charts/timeline.js' %}"></script>
-
-
 {% endblock%}
