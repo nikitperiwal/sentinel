@@ -1,5 +1,5 @@
 numpy==1.19.5
 tensorflow==2.3.0
 pandas==1.2.4
-tweepy==3.10.0
 django==3.2.4
+git+https://github.com/JustAnotherArchivist/snscrape.git

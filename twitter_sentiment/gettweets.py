@@ -1,13 +1,12 @@
-import datetime
 import pandas as pd
 import datetime as dt
-import tweepy
+import snscrape.modules.twitter as sntwitter
 from concurrent.futures.thread import ThreadPoolExecutor
 
 
-def request(api, search_string, start_date, end_date, tweet_no):
+def request(search, start_date, end_date, tweet_no):
     """
-    Request for tweets using 'GetOldTweets3' module.
+    Request for tweets using 'SNScrape' module.
     
     Parameters:
     -----------
@@ -21,25 +20,25 @@ def request(api, search_string, start_date, end_date, tweet_no):
         Number of tweets to scrap from the given time period
     """
 
-    tweets = tweepy.Cursor(api.search,
-                           q=search_string,
-                           lang="en",
-                           since=str(start_date),
-                           until=str(end_date),
-                           result_type='popular',
-                           tweet_mode='extended').items(tweet_no)
-    data = list()
-    for tweet in tweets:
-        data.append((
-            tweet.created_at,
-            "https://twitter.com/twitter/statuses/"+str(tweet.id),
-            tweet.user.screen_name,
-            tweet.full_text.replace('\n', ''),
-            len(tweet.full_text),
-            len(tweet.full_text.split()),
-            tweet.favorite_count,
-            tweet.retweet_count
-        ))
+    search += f" since:{str(start_date)}"
+    search += f" until:{str(end_date)}"
+    search += f" lang:en"
+    
+    tweets = sntwitter.TwitterSearchScraper(search).get_items()
+    
+    data = []
+    for i, tweet in enumerate(tweets):
+        data.append((str(tweet.date)[:-6],
+                    tweet.url,
+                    tweet.user.username,
+                    tweet.content,
+                    len(tweet.content),
+                    len(tweet.content.split()),
+                    tweet.likeCount,
+                    tweet.replyCount,
+                    tweet.retweetCount,))
+        if i>tweet_no:
+            break
     return data
 
 
@@ -63,9 +62,9 @@ def get_tweets(keywords, exclude_words=(), start_date='', end_date='', num_tweet
     """
 
     # Checking variable data
-    assert any(keywords), "Please include a word to search for in keywords."
-    assert start_date != '', "Please enter the start date."
-    assert end_date != '', "Please enter the end date."
+    assert any(keywords), "Please include a word to search for in keywords"
+    assert start_date != '', "Please enter the start date"
+    assert end_date != '', "Please enter the end date"
 
     # Converting variable type
     if isinstance(start_date, str):
@@ -85,23 +84,11 @@ def get_tweets(keywords, exclude_words=(), start_date='', end_date='', num_tweet
         
     day = dt.timedelta(1)
 
-    # Reading the credentials for twitter api
-    with open("twitter_sentiment/twitter-creds.txt", 'r') as file:
-        creds = file.read().split('\n')
-        consumer_token = creds[0]
-        consumer_secret = creds[1]
-        access_token = creds[2]
-        access_token_secret = creds[3]
-
-    auth = tweepy.OAuthHandler(consumer_token, consumer_secret)
-    auth.set_access_token(access_token, access_token_secret)
-    api = tweepy.API(auth)
-
     # Using Threading to improve speed.
     futurelist = list()
     with ThreadPoolExecutor(max_workers=7) as executor:
         while start_date <= end_date:
-            futurelist.append(executor.submit(request, api, search, start_date, start_date + day, num_tweets))
+            futurelist.append(executor.submit(request, search, start_date, start_date + day, num_tweets))
             start_date += day
 
     # Collecting the data from the threads
@@ -110,7 +97,7 @@ def get_tweets(keywords, exclude_words=(), start_date='', end_date='', num_tweet
         data.extend(x.result())
 
     # Create a pandas dataframe to store the tweets.
-    columns = ['datetime', 'tweet_url', 'username', 'text', 'char_length', 'word_length', 'likes', 'retweets']
+    columns = ['datetime', 'tweet_url', 'username', 'text', 'char_length', 'word_length', 'likes', 'replies', 'retweets']
     df = pd.DataFrame(data, columns=columns)
     df["datetime"] = pd.to_datetime(df["datetime"])
 
